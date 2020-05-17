@@ -49,6 +49,25 @@ fn automatically_change_directory_with_trailing_slash_and_same_name_as_command()
 }
 
 #[test]
+fn correctly_update_PWD_on_cd() {
+    use nu_test_support::playground::Playground;
+
+    Playground::setup("cd_test_env", |dirs, sandbox| {
+        sandbox.mkdir("cd");
+
+        let actual = nu!(
+            cwd: dirs.test(),
+            r#"
+                cd/
+                echo $nu.env.PWD
+            "#
+        );
+
+        assert!(actual.out.ends_with("cd"));
+    });
+}
+
+#[test]
 fn correctly_escape_external_arguments() {
     let actual = nu!(cwd: ".", r#"^echo '$0'"#);
 
